@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://hhq2nqgh48ci"]
+
+[ext_resource type="Script" uid="uid://bgqj00pq6r3r1" path="res://src/main.gd" id="1_ig7tw"]
+
+[node name="Main" type="Control" unique_id=935058371]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ig7tw")
+
+[node name="UI" type="VBoxContainer" parent="." unique_id=1864211919]
+layout_mode = 0
+offset_left = 187.0
+offset_top = 190.0
+offset_right = 1036.0
+offset_bottom = 341.0
+
+[node name="StoryLabel" type="Label" parent="UI" unique_id=1927502393]
+layout_mode = 2
+text = "You are Ted, a dog in the field behind the house. You get the feeling some treats are buried here somewhere..."
+
+[node name="TreatsLabel" type="Label" parent="UI" unique_id=767203823]
+layout_mode = 2
+
+[node name="HolesLabel" type="Label" parent="UI" unique_id=2080749498]
+layout_mode = 2
+
+[node name="DigButton" type="Button" parent="UI" unique_id=1921256829]
+layout_mode = 2
+text = "Dig a hole"
+
+[node name="HelpersLabel" type="Label" parent="UI" unique_id=534069783]
+layout_mode = 2
+
+[node name="HelpersButton" type="Button" parent="UI" unique_id=645170894]
+layout_mode = 2
+
+[node name="NoseLabel" type="Label" parent="UI" unique_id=312847561]
+layout_mode = 2
+
+[node name="NoseButton" type="Button" parent="UI" unique_id=423958672]
+layout_mode = 2
+
+[node name="DigTimer" type="Timer" parent="." unique_id=1587685107]
+wait_time = 0.1
+autostart = true

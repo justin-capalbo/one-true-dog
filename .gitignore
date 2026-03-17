@@ -1,0 +1,28 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot imports and caches
+*.import
+*.translation
+export_presets.cfg
+export_presets.cfg.bak
+
+# Mono-specific ignores (if using C#)
+.mono/
+data_*/
+mono_crash.*.json
+
+# Build / export
+/build/
+/export/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Tool configs to KEEP ---
+# .claude/ and .vscode/ are NOT ignored — they are tracked intentionally.
+# If you need to ignore local-only files within them, add specific entries below.
+.claude/settings.local.json
