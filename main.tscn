@@ -26,15 +26,18 @@ offset_bottom = 341.0
 layout_mode = 2
 text = "You are Ted, a dog in the field behind the house. You get the feeling some treats are buried here somewhere..."
 
+[node name="DigButton" type="Button" parent="UI" unique_id=1921256829]
+layout_mode = 2
+text = "Dig a hole"
+
 [node name="TreatsLabel" type="Label" parent="UI" unique_id=767203823]
 layout_mode = 2
 
 [node name="HolesLabel" type="Label" parent="UI" unique_id=2080749498]
 layout_mode = 2
 
-[node name="DigButton" type="Button" parent="UI" unique_id=1921256829]
+[node name="BonesLabel" type="Label" parent="UI" unique_id=2122647214]
 layout_mode = 2
-text = "Dig a hole"
 
 [node name="HelpersLabel" type="Label" parent="UI" unique_id=534069783]
 layout_mode = 2
@@ -46,6 +49,12 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="NoseButton" type="Button" parent="UI" unique_id=423958672]
+layout_mode = 2
+
+[node name="BoneDiggerLabel" type="Label" parent="UI" unique_id=2104000596]
+layout_mode = 2
+
+[node name="BoneDiggerButton" type="Button" parent="UI" unique_id=2034282748]
 layout_mode = 2
 
 [node name="DigTimer" type="Timer" parent="." unique_id=1587685107]
