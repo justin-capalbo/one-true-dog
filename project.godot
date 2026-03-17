@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="The One True Dog"
+config/name="One True Dog"
 run/main_scene="uid://hhq2nqgh48ci"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
