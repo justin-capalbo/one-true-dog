@@ -28,9 +28,7 @@ class Upgrade:
 			return c
 		return 0
 
-	func should_show(currencies: Dictionary) -> bool:
-		if not unlocked and currencies[currency] >= base_cost:
-			unlocked = true
+	func should_show() -> bool:
 		return unlocked
 
 # Resources
@@ -52,6 +50,11 @@ func _ready() -> void:
 	nose_upgrade = Upgrade.new(40, 2.2, Currency.TREATS)
 	bone_digger_upgrade = Upgrade.new(100, 2.2, Currency.TREATS)
 
+func _check_unlocks() -> void:
+	for upgrade: Upgrade in [helpers_upgrade, nose_upgrade, bone_digger_upgrade]:
+		if not upgrade.unlocked and currencies[upgrade.currency] >= upgrade.base_cost:
+			upgrade.unlocked = true
+
 func buy(upgrade: Upgrade) -> void:
 	currencies[upgrade.currency] -= upgrade.try_buy(currencies)
 	state_changed.emit()
@@ -62,12 +65,18 @@ func treats_per_hole() -> float:
 func bones_per_hole() -> float:
 	return 0.1 * bone_digger_upgrade.level
 
-func _earn(currency: Currency, amount: float) -> void:
+func _earn(currency: int, amount: float) -> void:
 	currencies[currency] += amount
 	lifetime[currency] += amount
+
+func tick() -> void:
+	var passive: float = helpers_upgrade.level * holes_per_helper_per_tick
+	if passive > 0.0:
+		dig(passive)
 
 func dig(amount: float) -> void:
 	holes_dug += amount
 	_earn(Currency.TREATS, amount * treats_per_hole())
 	_earn(Currency.BONES, amount * bones_per_hole())
+	_check_unlocks()
 	state_changed.emit()

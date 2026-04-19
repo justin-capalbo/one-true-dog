@@ -12,9 +12,7 @@ func _ready() -> void:
 	refresh_stats()
 
 func _on_tick() -> void:
-	var passive: float = GameState.helpers_upgrade.level * GameState.holes_per_helper_per_tick
-	if passive > 0.0:
-		GameState.dig(passive)
+	GameState.tick()
 
 func refresh_stats() -> void:
 	treats_label.text = "Treats: %.2f" % GameState.currencies[GameState.Currency.TREATS]

@@ -2,6 +2,10 @@
 
 Handles GitHub pull request workflows for this project using `gh` CLI.
 
+## Authorship prefix
+
+Always prefix all PR descriptions and review comments with `[Claude Agent]` on the first line so the author can distinguish your content from their own.
+
 ## Open a PR
 
 When the user says "open a PR", "create a PR", or similar:
@@ -9,7 +13,28 @@ When the user says "open a PR", "create a PR", or similar:
 1. Check for uncommitted changes with `git status`. If any exist, run `git add .` and commit with a descriptive message derived from the diff -- do not ask the user for a message. This same behavior applies when the user says "commit your work so far".
 2. Push the current branch to origin with `-u` if not already tracking.
 3. Run `git log main..HEAD` and `git diff main...HEAD` to understand all changes.
-4. Derive a concise PR title (under 70 chars) and a short body summarizing what changed and why.
+4. Derive a concise PR title (under 70 chars) and a body using this template:
+
+```
+[Claude Agent]
+
+### Description
+
+<summary of changes in paragraph form>
+
+### Key changes
+
+- <bullet list of meaningful changes; omit trivial ones only for large PRs>
+
+### Considerations (if relevant)
+
+<tradeoffs and pros/cons of approaches taken -- omit section if nothing notable>
+
+### Not in scope (if relevant)
+
+- <related things that were intentionally left out -- omit section if nothing notable>
+```
+
 5. Create the PR targeting `main` with `gh pr create`.
 6. Return the PR URL.
 
@@ -26,7 +51,24 @@ Perform a code review in the style of a **senior Godot 4 engineer**. Focus on:
 - Architecture: whether logic belongs in the scene, an autoload, or a resource
 - Any correctness bugs or edge cases
 
-Use `gh pr review --comment -b "..."` to leave an overall review comment, or `gh api` to leave inline comments on specific lines if warranted. Always fetch the PR diff first with `gh pr diff` before commenting.
+When writing GDScript, follow these conventions:
+- **Never use inner enums as parameter type hints** â€” GDScript inner enums are not reliable as type hints in all Godot 4.x versions. Use `int` for enum-valued parameters (e.g. `func _earn(currency: int, amount: float)`, not `func _earn(currency: Currency, amount: float)`).
+- **Never alias autoload singletons to local variables** â€” `var gs = GameState` adds noise without benefit since autoloads are already short global names. Use `GameState` directly.
+
+Always fetch the PR diff first with `gh pr diff`. Then post a review using `gh api` to submit inline comments alongside an overall summary body. Use this approach:
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
+  --method POST \
+  --field commit_id="{head_sha}" \
+  --field body="[Claude Agent] <overall summary>" \
+  --field event="COMMENT" \
+  --field "comments[][path]"="src/foo.gd" \
+  --field "comments[][position]"=<diff_position> \
+  --field "comments[][body]"="<inline comment>"
+```
+
+`position` is the line number within the diff hunk (1-indexed from the first `@@` line of that file's diff). Get the head SHA from `gh pr view {pr} --json headRefOid -q .headRefOid`.
 
 ## Merge a PR
 

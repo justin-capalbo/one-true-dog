@@ -17,21 +17,21 @@ func _ready() -> void:
 	refresh()
 
 func refresh() -> void:
-	var gs = GameState
-	var holes_per_sec: float = gs.helpers_upgrade.level * gs.holes_per_helper_per_tick / gs.TICK_RATE
+	var holes_per_sec: float = GameState.helpers_upgrade.level * GameState.holes_per_helper_per_tick / GameState.TICK_RATE
 
-	_refresh_upgrade(gs.helpers_upgrade, helpers_label, helpers_button,
-		"Helper Dogs: %d hired (%.2f holes/sec)" % [gs.helpers_upgrade.level, holes_per_sec])
-	_refresh_upgrade(gs.nose_upgrade, nose_label, nose_button,
-		"Nose for Treats: %d (avg %.1f treats/hole)" % [gs.nose_upgrade.level, gs.treats_per_hole()])
-	_refresh_upgrade(gs.bone_digger_upgrade, bone_digger_label, bone_digger_button,
-		"Bone Digger: %d (%.1f bones/hole)" % [gs.bone_digger_upgrade.level, gs.bones_per_hole()])
+	_refresh_upgrade(GameState.helpers_upgrade, helpers_label, helpers_button,
+		"Helper Dogs: %d hired (%.2f holes/sec)" % [GameState.helpers_upgrade.level, holes_per_sec])
+	_refresh_upgrade(GameState.nose_upgrade, nose_label, nose_button,
+		"Nose for Treats: %d (avg %.1f treats/hole)" % [GameState.nose_upgrade.level, GameState.treats_per_hole()])
+	_refresh_upgrade(GameState.bone_digger_upgrade, bone_digger_label, bone_digger_button,
+		"Bone Digger: %d (%.1f bones/hole)" % [GameState.bone_digger_upgrade.level, GameState.bones_per_hole()])
 
 func _refresh_upgrade(upgrade, label: Label, button: Button, label_text: String) -> void:
-	var visible_state: bool = upgrade.should_show(GameState.currencies)
+	var visible_state: bool = upgrade.unlocked
 	label.visible = visible_state
 	button.visible = visible_state
 	if visible_state:
 		label.text = label_text
 		button.text = "Upgrade for %d %s" % [upgrade.cost(), GameState.CURRENCY_NAMES[upgrade.currency]]
 		button.disabled = GameState.currencies[upgrade.currency] < upgrade.cost()
+
