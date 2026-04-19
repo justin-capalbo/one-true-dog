@@ -1,62 +1,54 @@
 [gd_scene format=3 uid="uid://hhq2nqgh48ci"]
 
 [ext_resource type="Script" uid="uid://bgqj00pq6r3r1" path="res://src/main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" path="res://src/tabs/dig_tab.tscn" id="2_dig"]
 
-[node name="Main" type="Control" unique_id=935058371]
+[node name="Main" type="Control" unique_id=1114030511]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -1.0
-offset_top = -1.0
-offset_right = -1.0
-offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
 
-[node name="UI" type="VBoxContainer" parent="." unique_id=1864211919]
-layout_mode = 0
-offset_left = 187.0
-offset_top = 190.0
-offset_right = 1036.0
-offset_bottom = 341.0
+[node name="UI" type="VBoxContainer" parent="." unique_id=363971518]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="StoryLabel" type="Label" parent="UI" unique_id=1927502393]
+[node name="StoryLabel" type="Label" parent="UI" unique_id=1258731673]
 layout_mode = 2
 text = "You are Ted, a dog in the field behind the house. You get the feeling some treats are buried here somewhere..."
 
-[node name="DigButton" type="Button" parent="UI" unique_id=1921256829]
-layout_mode = 2
-text = "Dig a hole"
-
-[node name="TreatsLabel" type="Label" parent="UI" unique_id=767203823]
+[node name="StatsBar" type="HBoxContainer" parent="UI" unique_id=941806544]
 layout_mode = 2
 
-[node name="HolesLabel" type="Label" parent="UI" unique_id=2080749498]
+[node name="HolesLabel" type="Label" parent="UI/StatsBar" unique_id=1259282603]
 layout_mode = 2
 
-[node name="BonesLabel" type="Label" parent="UI" unique_id=2122647214]
+[node name="TreatsLabel" type="Label" parent="UI/StatsBar" unique_id=1084722277]
 layout_mode = 2
 
-[node name="HelpersLabel" type="Label" parent="UI" unique_id=534069783]
+[node name="BonesLabel" type="Label" parent="UI/StatsBar" unique_id=1966676606]
 layout_mode = 2
 
-[node name="HelpersButton" type="Button" parent="UI" unique_id=645170894]
+[node name="TabContainer" type="TabContainer" parent="UI" unique_id=1857670242]
 layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
 
-[node name="NoseLabel" type="Label" parent="UI" unique_id=312847561]
+[node name="Field" parent="UI/TabContainer" unique_id=888276167 instance=ExtResource("2_dig")]
 layout_mode = 2
+metadata/_tab_index = 0
 
-[node name="NoseButton" type="Button" parent="UI" unique_id=423958672]
-layout_mode = 2
-
-[node name="BoneDiggerLabel" type="Label" parent="UI" unique_id=2104000596]
-layout_mode = 2
-
-[node name="BoneDiggerButton" type="Button" parent="UI" unique_id=2034282748]
-layout_mode = 2
-
-[node name="DigTimer" type="Timer" parent="." unique_id=1587685107]
+[node name="DigTimer" type="Timer" parent="." unique_id=1279271779]
 wait_time = 0.1
 autostart = true

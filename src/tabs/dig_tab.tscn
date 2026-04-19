@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://42qujlooi3c0"]
+
+[ext_resource type="Script" uid="uid://ba4dtxvbupwi8" path="res://src/tabs/dig_tab.gd" id="1_dig"]
+
+[sub_resource type="StyleBoxFlat" id="dig_normal"]
+bg_color = Color(0.18, 0.35, 0.55, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+content_margin_left = 24.0
+content_margin_right = 24.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="dig_hover"]
+bg_color = Color(0.22, 0.42, 0.65, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+content_margin_left = 24.0
+content_margin_right = 24.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="dig_pressed"]
+bg_color = Color(0.12, 0.25, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+content_margin_left = 24.0
+content_margin_right = 24.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+bg_color = Color(0.22, 0.22, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+bg_color = Color(0.3, 0.3, 0.35, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+bg_color = Color(0.15, 0.15, 0.18, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[node name="Field" type="VBoxContainer" unique_id=311457109]
+script = ExtResource("1_dig")
+
+[node name="TopSpacer" type="Control" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[node name="DigButton" type="Button" parent="." unique_id=53551431]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("dig_normal")
+theme_override_styles/hover = SubResource("dig_hover")
+theme_override_styles/pressed = SubResource("dig_pressed")
+text = "Dig a hole"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+
+[node name="Upgrades" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HelpersLabel" type="Label" parent="MarginContainer/Upgrades" unique_id=743427919]
+layout_mode = 2
+
+[node name="HelpersButton" type="Button" parent="MarginContainer/Upgrades" unique_id=64550738]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+
+[node name="NoseLabel" type="Label" parent="MarginContainer/Upgrades" unique_id=1653677063]
+layout_mode = 2
+
+[node name="NoseButton" type="Button" parent="MarginContainer/Upgrades" unique_id=457623644]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+
+[node name="BoneDiggerLabel" type="Label" parent="MarginContainer/Upgrades" unique_id=416449142]
+layout_mode = 2
+
+[node name="BoneDiggerButton" type="Button" parent="MarginContainer/Upgrades" unique_id=1057818434]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
