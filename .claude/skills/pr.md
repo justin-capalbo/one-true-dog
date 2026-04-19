@@ -52,10 +52,10 @@ Perform a code review in the style of a **senior Godot 4 engineer**. Focus on:
 - Any correctness bugs or edge cases
 
 When writing GDScript, follow these conventions:
-- **Never use inner enums as parameter type hints** â€” GDScript inner enums are not reliable as type hints in all Godot 4.x versions. Use `int` for enum-valued parameters (e.g. `func _earn(currency: int, amount: float)`, not `func _earn(currency: Currency, amount: float)`).
-- **Never alias autoload singletons to local variables** â€” `var gs = GameState` adds noise without benefit since autoloads are already short global names. Use `GameState` directly.
+- **Never use inner enums as parameter type hints.** GDScript inner enums are not reliable as type hints in all Godot 4.x versions. Use `int` for enum-valued parameters (e.g. `func _earn(currency: int, amount: float)`, not `func _earn(currency: Currency, amount: float)`).
+- **Never alias autoload singletons to local variables.** `var gs = GameState` adds noise without benefit since autoloads are already short global names. Use `GameState` directly.
 
-Always fetch the PR diff first with `gh pr diff`. Then post a review using `gh api` to submit inline comments alongside an overall summary body. Use this approach:
+Always fetch the PR diff first with `gh pr diff`. When re-reviewing a PR (a review has already been posted), first delete all your stale comments with `gh api --method DELETE repos/{owner}/{repo}/pulls/comments/{comment_id}` before posting the new review, unless the user says otherwise. Then post a review using `gh api` to submit inline comments alongside an overall summary body. Use this approach:
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
