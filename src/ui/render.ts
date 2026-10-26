@@ -1,98 +1,140 @@
-import { bonesPerHole, buy, canAfford, costOf, dig, holesPerSecond, isRevealed, treatsPerHole } from "../game/engine";
-import { CURRENCIES, type GameState } from "../game/state";
+import { bonesPerSecond, buy, canAfford, costOf, dig, isRevealed, treatsPerHole, treatsPerSecond } from "../game/engine";
+import { MILESTONES, PACK_SIZE, reachedMilestones } from "../game/milestones";
+import { CURRENCIES, type Currency, type GameState } from "../game/state";
 import { UPGRADES } from "../game/upgrades";
-import { fmt } from "./format";
+import { mountDevTools, type DevControls } from "./dev";
+import { el } from "./dom";
+import { fmt, fmtDuration } from "./format";
 
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text) node.textContent = text;
-  return node;
+const LOG_LIMIT = 60;
+
+export interface UIControls extends DevControls {
+  state: () => GameState;
+  reset: () => void;
 }
 
 /**
  * Builds the DOM once and returns an `update` that patches text and visibility each frame.
  * Game logic stays in ../game; this layer only reads state and forwards clicks.
+ * Layout follows Kittens Game: resources on the left, actions in the middle, a log on the right.
  */
-export function mountUI(root: HTMLElement, state: () => GameState, onReset: () => void) {
+export function mountUI(root: HTMLElement, ui: UIControls, offlineSeconds: number) {
   root.replaceChildren();
 
-  const header = el("header");
-  header.append(el("h1", undefined, "One True Dog"));
-  const resources = el("div", "resources");
-  const resourceRows = CURRENCIES.map((c) => {
-    const row = el("div", "resource");
-    const label = el("span", "resource-name", c);
-    const value = el("span", "resource-value");
-    row.append(label, value);
-    resources.append(row);
-    return { c, row, value };
+  // Left: resources.
+  const left = el("aside", "col col-resources");
+  const resTable = el("table", "res-table");
+  const resRows = new Map<Currency | "holes", { row: HTMLTableRowElement; amount: HTMLElement; rate: HTMLElement }>();
+  for (const key of [...CURRENCIES, "holes"] as const) {
+    const row = el("tr");
+    const amount = el("td", "num");
+    const rate = el("td", "num rate");
+    row.append(el("td", "res-name", key), amount, rate);
+    resTable.append(row);
+    resRows.set(key, { row, amount, rate });
+  }
+  left.append(resTable);
+
+  // Middle: era tabs and actions.
+  const middle = el("main", "col col-main");
+  const tabs = el("nav", "tabs");
+  tabs.append(el("span", "tab active", "Yard"));
+  const goal = el("p", "goal");
+  const actions = el("div", "actions");
+
+  const digBtn = el("button", "action");
+  const digName = el("span", "action-name", "Dig a hole");
+  const digSub = el("span", "action-sub");
+  digBtn.append(digName, digSub);
+  digBtn.addEventListener("click", () => dig(ui.state(), 1));
+  actions.append(digBtn);
+
+  const upgradeBtns = UPGRADES.map((def) => {
+    const btn = el("button", "action");
+    const name = el("span", "action-name");
+    const sub = el("span", "action-sub");
+    btn.append(name, sub);
+    btn.addEventListener("click", () => buy(ui.state(), def));
+    actions.append(btn);
+    return { def, btn, name, sub };
   });
-  const holesRow = el("div", "resource");
-  const holesValue = el("span", "resource-value");
-  holesRow.append(el("span", "resource-name", "holes"), holesValue);
-  resources.append(holesRow);
-  header.append(resources);
+  const hint = el("p", "hint", "Keep digging. Something might turn up.");
 
-  const main = el("main");
-  const digPanel = el("section", "panel dig");
-  const digButton = el("button", "dig-button", "Dig a hole");
-  digButton.addEventListener("click", () => dig(state(), 1));
-  const rates = el("p", "rates");
-  digPanel.append(digButton, rates);
-
-  const upgradesPanel = el("section", "panel upgrades");
-  upgradesPanel.append(el("h2", undefined, "Upgrades"));
-  const upgradeRows = UPGRADES.map((def) => {
-    const row = el("div", "upgrade");
-    const info = el("div", "upgrade-info");
-    const name = el("div", "upgrade-name", def.name);
-    const desc = el("div", "upgrade-desc");
-    info.append(name, desc);
-    const btn = el("button", "upgrade-buy");
-    btn.addEventListener("click", () => buy(state(), def));
-    row.append(info, btn);
-    upgradesPanel.append(row);
-    return { def, row, desc, btn };
-  });
-  const emptyHint = el("p", "hint", "Keep digging. Something might turn up.");
-  upgradesPanel.append(emptyHint);
-
-  main.append(digPanel, upgradesPanel);
-
-  const footer = el("footer");
-  const resetBtn = el("button", "link-button", "Reset save");
+  const resetBtn = el("button", "link-button", "reset save");
   resetBtn.addEventListener("click", () => {
-    if (confirm("Wipe your save and start over?")) onReset();
+    if (confirm("Wipe your save and start over?")) ui.reset();
   });
+  const footer = el("footer");
   footer.append(resetBtn);
 
-  root.append(header, main, footer);
+  middle.append(tabs, goal, actions, hint);
+  if (ui.devEnabled) middle.append(mountDevTools(ui));
+  middle.append(footer);
+
+  // Right: log.
+  const right = el("aside", "col col-log");
+  right.append(el("h2", undefined, "Log"));
+  const logList = el("ol", "log");
+  right.append(logList);
+
+  root.append(left, middle, right);
+
+  let seen = reachedMilestones(ui.state());
+  let lastState = ui.state();
+  const log = (text: string) => {
+    const li = el("li", undefined, text);
+    logList.prepend(li);
+    while (logList.children.length > LOG_LIMIT) logList.lastElementChild?.remove();
+  };
+  log(offlineSeconds > 60 ? `Welcome back. Your dogs dug for ${fmtDuration(offlineSeconds)} while you were away.` : "A dog stands in an empty yard.");
 
   return function update() {
-    const s = state();
-    for (const { c, row, value } of resourceRows) {
-      row.hidden = !isRevealed(s, c);
-      value.textContent = fmt(s.currencies[c]);
+    const s = ui.state();
+    if (s !== lastState) {
+      // Swapped save (reset or preset): don't replay every milestone it already passed.
+      seen = reachedMilestones(s);
+      lastState = s;
+      log("The yard shimmers. Things are different now.");
     }
-    holesRow.hidden = s.holesDug < 1;
-    holesValue.textContent = fmt(s.holesDug);
+    for (const m of MILESTONES) {
+      if (!seen.has(m.id) && m.reached(s)) {
+        seen.add(m.id);
+        log(m.text);
+      }
+    }
 
-    const parts = [`${fmt(treatsPerHole(s))} treats/hole`];
-    if (bonesPerHole(s) > 0) parts.push(`${fmt(bonesPerHole(s))} bones/hole`);
-    if (holesPerSecond(s) > 0) parts.push(`${fmt(holesPerSecond(s))} holes/sec`);
-    rates.textContent = parts.join(" · ");
+    const perSec: Record<Currency, number> = { treats: treatsPerSecond(s), bones: bonesPerSecond(s) };
+    for (const c of CURRENCIES) {
+      const r = resRows.get(c)!;
+      r.row.hidden = !isRevealed(s, c);
+      r.amount.textContent = fmt(s.currencies[c]);
+      r.rate.textContent = perSec[c] > 0 ? `+${fmt(perSec[c])}/s` : "";
+    }
+    const holes = resRows.get("holes")!;
+    holes.row.hidden = s.holesDug < 1;
+    holes.amount.textContent = fmt(s.holesDug);
+    holes.rate.textContent = "";
+
+    digSub.textContent = `+${fmt(treatsPerHole(s))} treats`;
 
     let anyShown = false;
-    for (const { def, row, desc, btn } of upgradeRows) {
+    for (const { def, btn, name, sub } of upgradeBtns) {
       const u = s.upgrades[def.id];
-      row.hidden = !u.unlocked;
+      btn.hidden = !u.unlocked;
       if (!u.unlocked) continue;
       anyShown = true;
-      desc.textContent = def.describe(s);
-      btn.textContent = `${fmt(costOf(s, def))} ${def.currency}`;
+      name.textContent = u.level > 0 ? `${def.name} (${u.level})` : def.name;
+      sub.textContent = `${fmt(costOf(s, def))} ${def.currency}`;
+      btn.title = def.describe(s);
       btn.disabled = !canAfford(s, def);
     }
-    emptyHint.hidden = anyShown;
+    hint.hidden = anyShown;
+
+    const helpers = s.upgrades.helpers.level;
+    goal.hidden = helpers === 0;
+    goal.textContent =
+      helpers >= PACK_SIZE
+        ? "The pack is ready. The next era is coming soon."
+        : `Goal: gather ${PACK_SIZE} dogs to form a pack (${helpers}/${PACK_SIZE}).`;
   };
 }

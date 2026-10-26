@@ -17,6 +17,20 @@ export function holesPerSecond(s: GameState): number {
   return s.upgrades.helpers.level * HOLES_PER_HELPER_PER_SEC * speed;
 }
 
+export function treatsPerSecond(s: GameState): number {
+  return holesPerSecond(s) * treatsPerHole(s);
+}
+
+export function bonesPerSecond(s: GameState): number {
+  return holesPerSecond(s) * bonesPerHole(s);
+}
+
+/** Add currency as if earned, for dev tools. */
+export function grant(s: GameState, currency: Currency, amount: number): void {
+  earn(s, currency, amount);
+  checkUnlocks(s);
+}
+
 function earn(s: GameState, currency: Currency, amount: number): void {
   s.currencies[currency] += amount;
   s.lifetime[currency] += amount;
