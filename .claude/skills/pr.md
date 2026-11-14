@@ -44,16 +44,12 @@ Default base branch is `main` unless the user specifies otherwise.
 
 When the user says "review the PR", "leave comments", "do a code review", or similar:
 
-Perform a code review in the style of a **senior Godot 4 engineer**. Focus on:
-- Godot-specific patterns: signal usage, scene structure, autoload/singleton design, node ownership
-- GDScript idioms: typed variables, `@onready`, proper use of `_ready` vs `_enter_tree`
-- Performance: unnecessary `update_labels`-style calls every tick, redundant node lookups
-- Architecture: whether logic belongs in the scene, an autoload, or a resource
+Perform a code review in the style of a **senior TypeScript / web game engineer**. Focus on:
+- Keeping game logic in `src/game/` pure (no DOM), so it stays testable; UI in `src/ui/` should only read state and forward input
+- Numeric correctness: rates applied per elapsed second rather than per frame, cost curves, offline progress caps, and number formatting at large magnitudes
+- Save compatibility: new state fields must be filled in by `deserialize` so older saves keep loading
+- Performance: no DOM rebuilds per frame, no layout thrash in the update loop
 - Any correctness bugs or edge cases
-
-When writing GDScript, follow these conventions:
-- **Never use inner enums as parameter type hints.** GDScript inner enums are not reliable as type hints in all Godot 4.x versions. Use `int` for enum-valued parameters (e.g. `func _earn(currency: int, amount: float)`, not `func _earn(currency: Currency, amount: float)`).
-- **Never alias autoload singletons to local variables.** `var gs = GameState` adds noise without benefit since autoloads are already short global names. Use `GameState` directly.
 
 Always fetch the PR diff first with `gh pr diff`. When re-reviewing a PR (a review has already been posted), first delete all your stale comments with `gh api --method DELETE repos/{owner}/{repo}/pulls/comments/{comment_id}` before posting the new review, unless the user says otherwise. Then post a review using `gh api` to submit inline comments alongside an overall summary body. Use this approach:
 
@@ -63,7 +59,7 @@ gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
   --field commit_id="{head_sha}" \
   --field body="[Claude Agent] <overall summary>" \
   --field event="COMMENT" \
-  --field "comments[][path]"="src/foo.gd" \
+  --field "comments[][path]"="src/foo.ts" \
   --field "comments[][position]"=<diff_position> \
   --field "comments[][body]"="<inline comment>"
 ```
