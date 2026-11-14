@@ -14,11 +14,15 @@ npm run build    # typecheck + production build into dist/
 npm run sim      # print a pacing timeline for the current balance
 ```
 
+## Deploying
+
+Every push to `main` builds the game and deploys it to GitHub Pages (`.github/workflows/deploy.yml`). This needs a one-time setting: in the repo, go to Settings, then Pages, and set Source to "GitHub Actions".
+
 ## Balancing
 
 `npm run sim` plays the game headlessly with a simple strategy (click at a steady rate, buy the cheapest affordable upgrade) and prints when each milestone happens. Re-run it after any change to costs or rates. Useful flags: `--clicks 0` for fully idle play, `--click-for 120` to stop clicking after two minutes, `--buys` to list every purchase, `--stop <milestone id>`. A test in `src/sim/simulate.test.ts` fails if the Yard gets much faster or slower than its 5 to 30 minute target.
 
-Dev tools (game speed up to 1000x, free resources, time skips, and save presets parked at key moments) appear under the actions in `npm run dev`, or on any build with `?dev` in the URL. Presets live in `src/game/presets.ts`.
+Dev tools (game speed up to 1000x, free resources, time skips, and save presets parked at key moments) appear under the actions in `npm run dev`, or on any build with `?dev` or `#dev` in the URL. Presets live in `src/game/presets.ts`.
 
 ## Layout
 

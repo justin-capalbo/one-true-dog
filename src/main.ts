@@ -5,8 +5,8 @@ import { newGame } from "./game/state";
 import { mountUI } from "./ui/render";
 
 const AUTOSAVE_MS = 10_000;
-// Dev tools show in `npm run dev`, or on any build with ?dev in the URL.
-const DEV = import.meta.env.DEV || new URLSearchParams(location.search).has("dev");
+// Dev tools show in `npm run dev`, or on any build with ?dev or #dev in the URL.
+const DEV = import.meta.env.DEV || new URLSearchParams(location.search).has("dev") || location.hash === "#dev";
 
 let state = load();
 let speed = 1;

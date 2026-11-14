@@ -61,8 +61,21 @@ export function mountUI(root: HTMLElement, ui: UIControls, offlineSeconds: numbe
   const hint = el("p", "hint", "Keep digging. Something might turn up.");
 
   const resetBtn = el("button", "link-button", "reset save");
+  // Two-step confirm in the page itself, since some hosts (like Claude artifacts) block confirm().
+  let resetArmed: ReturnType<typeof setTimeout> | undefined;
   resetBtn.addEventListener("click", () => {
-    if (confirm("Wipe your save and start over?")) ui.reset();
+    if (resetArmed) {
+      clearTimeout(resetArmed);
+      resetArmed = undefined;
+      resetBtn.textContent = "reset save";
+      ui.reset();
+      return;
+    }
+    resetBtn.textContent = "click again to wipe your save";
+    resetArmed = setTimeout(() => {
+      resetArmed = undefined;
+      resetBtn.textContent = "reset save";
+    }, 4000);
   });
   const footer = el("footer");
   footer.append(resetBtn);

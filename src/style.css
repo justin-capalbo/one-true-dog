@@ -7,12 +7,12 @@
   --border: #ccc;
   --hover: #f0f0f0;
   --accent: #3a6ea5;
-  color-scheme: light dark;
+  color-scheme: light;
   font: 13px/1.4 Verdana, Geneva, system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #161616;
     --panel: #1e1e1e;
     --ink: #ddd;
@@ -20,7 +20,20 @@
     --border: #444;
     --hover: #2a2a2a;
     --accent: #7aa7d9;
+    color-scheme: dark;
   }
+}
+
+/* An explicit theme set by the host page wins over the OS setting. */
+:root[data-theme="dark"] {
+  --bg: #161616;
+  --panel: #1e1e1e;
+  --ink: #ddd;
+  --muted: #888;
+  --border: #444;
+  --hover: #2a2a2a;
+  --accent: #7aa7d9;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -33,7 +46,9 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
   gap: 16px;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 16px;
+  padding-block: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 
 @media (max-width: 760px) {
